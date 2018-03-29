@@ -61,6 +61,7 @@ import {SubtitleSettingsOpenButton} from './components/subtitlesettings/subtitle
 import {SubtitleSettingsPanel} from './components/subtitlesettings/subtitlesettingspanel';
 import {WindowColorSelectBox} from './components/subtitlesettings/windowcolorselectbox';
 import {WindowOpacitySelectBox} from './components/subtitlesettings/windowopacityselectbox';
+import {NextButton} from './components/nextbutton';
 import {ArrayUtils} from './arrayutils';
 import {StringUtils} from './stringutils';
 import {PlayerUtils} from './playerutils';
@@ -157,6 +158,7 @@ const playerui = {
   VolumeToggleButton,
   VRToggleButton,
   Watermark,
+  NextButton,
   // Subtitle related components
   subtitlesettings: {
     BackgroundColorSelectBox,

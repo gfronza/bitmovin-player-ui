@@ -46,6 +46,7 @@ import {Label} from './components/label';
 import PlayerEvent = bitmovin.PlayerAPI.PlayerEvent;
 import {AirPlayToggleButton} from './components/airplaytogglebutton';
 import {PictureInPictureToggleButton} from './components/pictureinpicturetogglebutton';
+import {NextButton} from './components/nextbutton';
 import {Spacer} from './components/spacer';
 import {UIUtils} from './uiutils';
 import {ArrayUtils} from './arrayutils';
@@ -63,6 +64,10 @@ export interface TimelineMarker {
   title?: string;
 }
 
+export interface PlaylistHandler {
+  next: () => void;
+}
+
 export interface UIConfig {
   /**
    * Specifies the container in the DOM into which the UI will be added. Can be a CSS selector string or a
@@ -75,6 +80,7 @@ export interface UIConfig {
     markers?: TimelineMarker[];
   };
   recommendations?: UIRecommendationConfig[];
+  playlistHandler?: PlaylistHandler;
 }
 
 /**
@@ -459,6 +465,7 @@ export namespace UIManager.Factory {
             new VolumeToggleButton(),
             new VolumeSlider(),
             new Spacer(),
+            new NextButton(),
             new PictureInPictureToggleButton(),
             new AirPlayToggleButton(),
             new CastToggleButton(),
@@ -580,6 +587,7 @@ export namespace UIManager.Factory {
             new CastToggleButton(),
             new VRToggleButton(),
             new VolumeToggleButton(),
+            new NextButton(),
             new SettingsToggleButton({ settingsPanel: settingsPanel }),
             new FullscreenToggleButton(),
           ],
@@ -705,6 +713,7 @@ export namespace UIManager.Factory {
         new PlaybackTimeLabel(),
         new VRToggleButton(),
         new VolumeControlButton(),
+        new NextButton(),
         new SettingsToggleButton({ settingsPanel: settingsPanel }),
         new CastToggleButton(),
         new FullscreenToggleButton(),
@@ -786,6 +795,7 @@ export namespace UIManager.Factory {
         new VolumeSlider(),
         new VolumeControlButton(),
         new VolumeControlButton({ vertical: false }),
+        new NextButton(),
         new SettingsToggleButton({ settingsPanel: settingsPanel }),
         new CastToggleButton(),
         new FullscreenToggleButton(),
