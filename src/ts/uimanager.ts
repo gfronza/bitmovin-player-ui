@@ -81,6 +81,7 @@ export interface UIConfig {
   };
   recommendations?: UIRecommendationConfig[];
   playlistHandler?: PlaylistHandler;
+  nextDissapear?: number;
 }
 
 /**
@@ -172,6 +173,7 @@ export class UIManager {
    */
   constructor(player: PlayerAPI, uiVariants: UIVariant[], config?: UIConfig);
   constructor(player: PlayerAPI, playerUiOrUiVariants: UIContainer | UIVariant[], config: UIConfig = {}) {
+
     if (playerUiOrUiVariants instanceof UIContainer) {
       // Single-UI constructor has been called, transform arguments to UIVariant[] signature
       let playerUi = <UIContainer>playerUiOrUiVariants;
@@ -417,7 +419,7 @@ export namespace UIManager.Factory {
     return UIManager.Factory.buildModernCastReceiverUI(player, config);
   }
 
-  function modernUI() {
+  function modernUI(config: UIConfig = {}) {
     let subtitleOverlay = new SubtitleOverlay();
 
     let settingsPanel = new SettingsPanel({
@@ -465,7 +467,7 @@ export namespace UIManager.Factory {
             new VolumeToggleButton(),
             new VolumeSlider(),
             new Spacer(),
-            new NextButton(),
+            new NextButton(config.nextDissapear),
             new PictureInPictureToggleButton(),
             new AirPlayToggleButton(),
             new CastToggleButton(),
@@ -526,7 +528,7 @@ export namespace UIManager.Factory {
     });
   }
 
-  function modernSmallScreenUI() {
+  function modernSmallScreenUI(config: UIConfig = {}) {
     let subtitleOverlay = new SubtitleOverlay();
 
     let settingsPanel = new SettingsPanel({
@@ -587,7 +589,7 @@ export namespace UIManager.Factory {
             new CastToggleButton(),
             new VRToggleButton(),
             new VolumeToggleButton(),
-            new NextButton(),
+            new NextButton(config.nextDissapear),
             new SettingsToggleButton({ settingsPanel: settingsPanel }),
             new FullscreenToggleButton(),
           ],
@@ -670,12 +672,12 @@ export namespace UIManager.Factory {
         return context.isAdWithUI;
       },
     }, {
-      ui: modernSmallScreenUI(),
+      ui: modernSmallScreenUI(config),
       condition: (context: UIConditionContext) => {
         return context.isMobile && context.documentWidth < smallScreenSwitchWidth;
       },
     }, {
-      ui: modernUI(),
+      ui: modernUI(config),
     }], config);
   }
 
@@ -686,7 +688,7 @@ export namespace UIManager.Factory {
         return context.isAdWithUI;
       },
     }, {
-      ui: modernSmallScreenUI(),
+      ui: modernSmallScreenUI(config),
     }], config);
   }
 
@@ -694,7 +696,7 @@ export namespace UIManager.Factory {
     return new UIManager(player, modernCastReceiverUI(), config);
   }
 
-  function legacyUI() {
+  function legacyUI(config: UIConfig = {}) {
     let settingsPanel = new SettingsPanel({
       components: [
         new SettingsPanelItem('Video Quality', new VideoQualitySelectBox()),
@@ -713,7 +715,7 @@ export namespace UIManager.Factory {
         new PlaybackTimeLabel(),
         new VRToggleButton(),
         new VolumeControlButton(),
-        new NextButton(),
+        new NextButton(config.nextDissapear),
         new SettingsToggleButton({ settingsPanel: settingsPanel }),
         new CastToggleButton(),
         new FullscreenToggleButton(),
