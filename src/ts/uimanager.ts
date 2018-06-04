@@ -47,6 +47,7 @@ import PlayerEvent = bitmovin.PlayerAPI.PlayerEvent;
 import {AirPlayToggleButton} from './components/airplaytogglebutton';
 import {PictureInPictureToggleButton} from './components/pictureinpicturetogglebutton';
 import {NextButton} from './components/nextbutton';
+import {IntroSkipButton, IntroSkipButtonConfig} from './components/introskipbutton';
 import {Spacer} from './components/spacer';
 import {UIUtils} from './uiutils';
 import {ArrayUtils} from './arrayutils';
@@ -81,7 +82,7 @@ export interface UIConfig {
   };
   recommendations?: UIRecommendationConfig[];
   playlistHandler?: PlaylistHandler;
-  nextDissapear?: number;
+  introSkipButton?: IntroSkipButtonConfig;
 }
 
 /**
@@ -467,7 +468,7 @@ export namespace UIManager.Factory {
             new VolumeToggleButton(),
             new VolumeSlider(),
             new Spacer(),
-            new NextButton(config.nextDissapear),
+            new NextButton(),
             new PictureInPictureToggleButton(),
             new AirPlayToggleButton(),
             new CastToggleButton(),
@@ -486,6 +487,7 @@ export namespace UIManager.Factory {
         new BufferingOverlay(),
         new PlaybackToggleOverlay(),
         new CastStatusOverlay(),
+        new IntroSkipButton(config.introSkipButton),
         controlBar,
         new TitleBar(),
         new RecommendationOverlay(),
@@ -582,6 +584,7 @@ export namespace UIManager.Factory {
         new BufferingOverlay(),
         new CastStatusOverlay(),
         new PlaybackToggleOverlay(),
+        new IntroSkipButton(config.introSkipButton),
         controlBar,
         new TitleBar({
           components: [
@@ -589,7 +592,7 @@ export namespace UIManager.Factory {
             new CastToggleButton(),
             new VRToggleButton(),
             new VolumeToggleButton(),
-            new NextButton(config.nextDissapear),
+            new NextButton(),
             new SettingsToggleButton({ settingsPanel: settingsPanel }),
             new FullscreenToggleButton(),
           ],
@@ -715,7 +718,7 @@ export namespace UIManager.Factory {
         new PlaybackTimeLabel(),
         new VRToggleButton(),
         new VolumeControlButton(),
-        new NextButton(config.nextDissapear),
+        new NextButton(),
         new SettingsToggleButton({ settingsPanel: settingsPanel }),
         new CastToggleButton(),
         new FullscreenToggleButton(),
@@ -727,6 +730,7 @@ export namespace UIManager.Factory {
         new SubtitleOverlay(),
         new CastStatusOverlay(),
         new PlaybackToggleOverlay(),
+        new IntroSkipButton(config.introSkipButton),
         new Watermark(),
         new RecommendationOverlay(),
         controlBar,
@@ -755,7 +759,7 @@ export namespace UIManager.Factory {
     });
   }
 
-  function legacyCastReceiverUI() {
+  function legacyCastReceiverUI(config: UIConfig = {}) {
     let controlBar = new ControlBar({
       components: [
         new SeekBar(),
@@ -776,7 +780,7 @@ export namespace UIManager.Factory {
     });
   }
 
-  function legacyTestUI() {
+  function legacyTestUI(config: UIConfig = {}) {
     let settingsPanel = new SettingsPanel({
       components: [
         new SettingsPanelItem('Video Quality', new VideoQualitySelectBox()),
@@ -809,6 +813,7 @@ export namespace UIManager.Factory {
         new SubtitleOverlay(),
         new CastStatusOverlay(),
         new PlaybackToggleOverlay(),
+        new IntroSkipButton(config.introSkipButton),
         new Watermark(),
         new RecommendationOverlay(),
         controlBar,
@@ -826,16 +831,16 @@ export namespace UIManager.Factory {
         return context.isAdWithUI;
       },
     }, {
-      ui: legacyUI(),
+      ui: legacyUI(config),
     }], config);
   }
 
   export function buildLegacyCastReceiverUI(player: PlayerAPI, config: UIConfig = {}): UIManager {
-    return new UIManager(player, legacyCastReceiverUI(), config);
+    return new UIManager(player, legacyCastReceiverUI(config), config);
   }
 
   export function buildLegacyTestUI(player: PlayerAPI, config: UIConfig = {}): UIManager {
-    return new UIManager(player, legacyTestUI(), config);
+    return new UIManager(player, legacyTestUI(config), config);
   }
 }
 
