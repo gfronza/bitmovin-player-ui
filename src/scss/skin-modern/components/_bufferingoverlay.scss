@@ -34,6 +34,10 @@
     }
   }
 
+  .#{$prefix}-ui-buffering-overlay-progress-label {
+    display: block;
+  }
+
   .#{$prefix}-ui-buffering-overlay-indicator {
     $buffering-animation-duration: 2s;
     $buffering-animation-delay: $buffering-animation-duration / 10;

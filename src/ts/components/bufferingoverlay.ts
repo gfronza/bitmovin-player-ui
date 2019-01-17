@@ -1,5 +1,6 @@
 import {ContainerConfig, Container} from './container';
 import {UIInstanceManager} from '../uimanager';
+import {Label, LabelConfig} from './label';
 import {Component, ComponentConfig} from './component';
 import {Timeout} from '../timeout';
 import { PlayerAPI } from 'bitmovin-player';
@@ -22,14 +23,18 @@ export interface BufferingOverlayConfig extends ContainerConfig {
 export class BufferingOverlay extends Container<BufferingOverlayConfig> {
 
   private indicators: Component<ComponentConfig>[];
+  private progressLabel: BufferingProgressLabel;
 
   constructor(config: BufferingOverlayConfig = {}) {
     super(config);
+
+    this.progressLabel = new BufferingProgressLabel({ text: "0%" });
 
     this.indicators = [
       new Component<ComponentConfig>({ tag: 'div', cssClass: 'ui-buffering-overlay-indicator' }),
       new Component<ComponentConfig>({ tag: 'div', cssClass: 'ui-buffering-overlay-indicator' }),
       new Component<ComponentConfig>({ tag: 'div', cssClass: 'ui-buffering-overlay-indicator' }),
+      this.progressLabel
     ];
 
     this.config = this.mergeConfig(config, <BufferingOverlayConfig>{
@@ -49,12 +54,27 @@ export class BufferingOverlay extends Container<BufferingOverlayConfig> {
       this.show();
     });
 
+    let progressTimeout = new Timeout(200, () => {
+      // let level = player.buffer.getLevel("ForwardDuration", "video");
+      let currentBuffer = player.getVideoBufferLength();
+
+      if (currentBuffer) {
+        let restartThreshold = (player.getConfig().tweaks ? player.getConfig().tweaks.restart_threshold : null) || 0.9
+        let progress = Math.min(100, Math.round((currentBuffer / restartThreshold) * 100));
+        this.progressLabel.setText(progress + '%');
+      } else {
+        this.progressLabel.setText('0%');
+      }
+    }, true);
+
     let showOverlay = () => {
       overlayShowTimeout.start();
+      progressTimeout.start();
     };
 
     let hideOverlay = () => {
       overlayShowTimeout.clear();
+      progressTimeout.clear();
       this.hide();
     };
 
@@ -73,5 +93,16 @@ export class BufferingOverlay extends Container<BufferingOverlayConfig> {
     if (player.isStalled()) {
       this.show();
     }
+  }
+}
+
+class BufferingProgressLabel extends Label<LabelConfig> {
+
+  constructor(config: LabelConfig = {}) {
+    super(config);
+
+    this.config = this.mergeConfig(config, {
+      cssClass: 'ui-buffering-overlay-progress-label',
+    }, this.config);
   }
 }
